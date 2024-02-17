@@ -39,8 +39,8 @@
       "KC_SLSH",
       "KC_BSPC",
       "KC_SPC",
-      "LT(7,KC_ENT)",
-      "RALT_T(KC_ESC)"
+      "LT(7,KC_ESC)",
+      "RALT_T(KC_ENT)"
     ],
     [
       "RGB_TOG",
