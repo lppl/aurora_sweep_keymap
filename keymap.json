@@ -37,7 +37,7 @@
       "LALT_T(KC_COMM)",
       "RCTL_T(KC_DOT)",
       "KC_SLSH",
-      "MEH_T(KC_BSPC)",
+      "LGUI_T(KC_BSPC)",
       "ALL_T(KC_SPC)",
       "LT(7,KC_ESC)",
       "RALT_T(KC_ENT)"
@@ -200,7 +200,7 @@
       "KC_TRNS",
       "KC_NO",
       "LCTL(KC_LALT)",
-      "LSFT(KC_LSFT)",
+      "KC_LCTL",
       "KC_TRNS",
       "KC_TRNS",
       "KC_F4",
@@ -256,7 +256,7 @@
       "KC_TRNS",
       "KC_TRNS",
       "KC_TRNS",
-      "KC_TRNS"
+      "KC_LGUI"
     ],
     [
       "KC_CAPS",
@@ -264,8 +264,8 @@
       "KC_COLN",
       "KC_ESC",
       "KC_TRNS",
-      "KC_TRNS",
-      "KC_TRNS",
+      "KC_BSPC",
+      "KC_DEL",
       "KC_TRNS",
       "KC_TRNS",
       "KC_DEL",
