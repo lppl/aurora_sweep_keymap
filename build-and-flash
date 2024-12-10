@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+name=$(tmux display-message -p "#S")
+left="$name:1.1"
+right="$name:1.2"
+
+if test -n "$QMK_HOME";
+then
+	pushd $QMK_HOME
+	qmk compile -kb splitkb/aurora/sweep -km lppl;
+	qmk flash -e CONVERT_TO=liatris -kb splitkb/aurora/sweep/rev1 -km lppl;
+	popd
+else
+	echo "ENV QMK_HOME does not exist; Fix it please."
+fi
