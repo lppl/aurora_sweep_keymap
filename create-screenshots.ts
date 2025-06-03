@@ -80,15 +80,24 @@ const COLORS = Object.freeze({
   MT3_3277_ACCENT_RED: "70",
 });
 const RECORDING = `debug/recording.webm`;
+const WIDTH = 1024;
+const HEIGHT = 1024;
 
 async function main() {
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      `--window-size=${WIDTH},${HEIGHT}`,
+    ],
+    defaultViewport: {
+      width: WIDTH,
+      height: HEIGHT,
+    },
     headless: false,
   });
   log("Navigate to QMK Editor");
   const page = await browser.newPage();
-  await page.setViewport({ width: 1000, height: 1024 });
   await page.goto(URL_EDITOR);
 
   log(`Start recording to ${RECORDING}`);
@@ -109,19 +118,18 @@ async function main() {
   log(`Prepare screenshot area`);
   await page.select("#colorway-select", COLORS.MT3_LOTR_DWARVISH_DURIN);
   const imageArea = await page.waitForSelector("#visual-keymap");
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 2000));
   for (let layer of await page.$$(".layer.non-empty")) {
     const level = await page.evaluate((el) => el.textContent, layer);
     const img = `img/layer_${level}.png`;
     log(` - ${level}. create screenshot ${img}`);
     await layer.click();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     await imageArea?.screenshot({ path: img });
   }
 
   await recorder.stop();
 
-  await new Promise((resolve) => setTimeout(resolve, 10000000));
   page.close();
 }
 
