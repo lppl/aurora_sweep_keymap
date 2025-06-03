@@ -1,0 +1,8 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@types/node": "22.10.2",
+    "puppeteer": "24.10.0",
+    "typescript": "5.7.2"
+  }
+}

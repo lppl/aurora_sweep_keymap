@@ -40,7 +40,7 @@
       "KC_TAB",
       "KC_SPC",
       "LT(7,KC_ESC)",
-      "LT(0,KC_ENT)"
+      "KC_ENT"
     ],
     [
       "KC_TRNS",
@@ -256,7 +256,7 @@
       "KC_TRNS",
       "KC_TRNS",
       "KC_TRNS",
-      "KC_LGUI"
+      "KC_TRNS"
     ],
     [
       "KC_CAPS",
