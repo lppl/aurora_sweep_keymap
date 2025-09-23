@@ -161,23 +161,15 @@ function check(command: string, ...args: string[]): boolean {
 
 function prepare() {
   try {
-    if (check("git", "--porcelain")) {
-      runOrDie("git", "branch", "-f", BRANCH_NAME, "HEAD");
-    } else {
-      runOrDie(
-        "git",
-        "stash",
-        "push",
-        "--include-untracked",
-        "--all",
-        "-m",
-        "WIP update",
-      );
-      runOrDie("git", "branch", "-f", BRANCH_NAME, "stash@{0}");
-      runOrDie("git", "stash", "pop");
-    }
+    // if (check("git", "--porcelain")) {
+    //   runOrDie("git", "branch", "-f", BRANCH_NAME, "HEAD");
+    // } else {
+    //   runOrDie("git", "stash", "push", "-ua", "-m='WIP update'");
+    //   runOrDie("git", "branch", "-f", BRANCH_NAME, "stash@{0}");
+    //   runOrDie("git", "stash", "pop");
+    // }
 
-    runOrDie("git", "push", "origin", "--force", BRANCH_NAME);
+    runOrDie("git", "push", "origin", "--force", "rethink:" + BRANCH_NAME);
   } catch (error) {
     console.error("Preparation failed:", error);
     process.exit(1);
@@ -187,7 +179,7 @@ function prepare() {
 function cleanup() {
   try {
     runOrDie("git", "branch", "-D", BRANCH_NAME);
-    runOrDie("git", "push", "origin", "--delete", BRANCH_NAME);
+    // runOrDie("git", "push", "origin", "--delete", BRANCH_NAME);
   } catch (error) {
     console.error("Cleanup failed:", error);
     process.exit(1);
