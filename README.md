@@ -28,7 +28,7 @@ _This keymap is based on [Aurora Sweep](https://github.com/qmk/qmk_firmware/tree
 
 ![layer_5.png](img/layer_5.png)
 
-### Layer 6: Numbers
+### Layer 6: Legacy keymap for old habits
 
 ![layer_6.png](img/layer_6.png)
 
