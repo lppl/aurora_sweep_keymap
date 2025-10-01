@@ -134,7 +134,7 @@ async function main() {
     await imageArea?.screenshot({ path: img });
   }
 
-  await recorder.stop();
+  // await recorder.stop();
 
   page.close();
 }
