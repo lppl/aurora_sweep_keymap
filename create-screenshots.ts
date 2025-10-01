@@ -100,6 +100,9 @@ async function main() {
   const page = await browser.newPage();
   await page.goto(URL_EDITOR);
 
+  // TODO find out why recording stopped to work
+  // - experienced bug: script crash without error message
+  //
   // log(`Start recording to ${RECORDING}`);
   // runOrDie("rm", "-f", RECORDING);
   // const recorder = await page.screencast({ path: RECORDING });
