@@ -100,8 +100,9 @@ async function main() {
   const page = await browser.newPage();
   await page.goto(URL_EDITOR);
 
-  log(`Start recording to ${RECORDING}`);
-  const recorder = await page.screencast({ path: RECORDING });
+  // log(`Start recording to ${RECORDING}`);
+  // runOrDie("rm", "-f", RECORDING);
+  // const recorder = await page.screencast({ path: RECORDING });
 
   log("Open import url popup");
   const btn = await page.$("#import-url");
@@ -119,10 +120,12 @@ async function main() {
   await page.select("#colorway-select", COLORS.MT3_LOTR_DWARVISH_DURIN);
   const imageArea = await page.waitForSelector("#visual-keymap");
   await new Promise((resolve) => setTimeout(resolve, 2000));
+
   for (let layer of await page.$$(".layer.non-empty")) {
     const level = await page.evaluate((el) => el.textContent, layer);
     const img = `img/layer_${level}.png`;
     log(` - ${level}. create screenshot ${img}`);
+    runOrDie("rm", "-f", img);
     await layer.click();
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await imageArea?.screenshot({ path: img });
@@ -161,15 +164,24 @@ function check(command: string, ...args: string[]): boolean {
 
 function prepare() {
   try {
-    // if (check("git", "--porcelain")) {
-    //   runOrDie("git", "branch", "-f", BRANCH_NAME, "HEAD");
-    // } else {
-    //   runOrDie("git", "stash", "push", "-ua", "-m='WIP update'");
-    //   runOrDie("git", "branch", "-f", BRANCH_NAME, "stash@{0}");
-    //   runOrDie("git", "stash", "pop");
-    // }
+    if (check("git", "--porcelain")) {
+      runOrDie("git", "branch", "-f", BRANCH_NAME, "HEAD");
+    } else {
+      runOrDie(
+        "git",
+        "stash",
+        "push",
+        "--include-untracked",
+        "--all",
+        "-m",
+        "WIP update",
+      );
+      // runOrDie("git", "stash", "push", "-ua", "-m='WIP update'");
+      runOrDie("git", "branch", "-f", BRANCH_NAME, "stash@{0}");
+      runOrDie("git", "stash", "pop");
+    }
 
-    runOrDie("git", "push", "origin", "--force", "rethink:" + BRANCH_NAME);
+    runOrDie("git", "push", "origin", "--force", BRANCH_NAME);
   } catch (error) {
     console.error("Preparation failed:", error);
     process.exit(1);
@@ -179,7 +191,7 @@ function prepare() {
 function cleanup() {
   try {
     runOrDie("git", "branch", "-D", BRANCH_NAME);
-    // runOrDie("git", "push", "origin", "--delete", BRANCH_NAME);
+    runOrDie("git", "push", "origin", "--delete", BRANCH_NAME);
   } catch (error) {
     console.error("Cleanup failed:", error);
     process.exit(1);
@@ -190,6 +202,8 @@ async function safeMain() {
   prepare();
   try {
     await main();
+  } catch (e) {
+    console.error(e);
   } finally {
     cleanup();
     process.exit(0);
