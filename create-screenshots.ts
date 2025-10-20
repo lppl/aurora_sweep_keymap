@@ -98,9 +98,11 @@ async function main() {
   });
   log("Navigate to QMK Editor");
   const page = await browser.newPage();
+
   await page.goto(URL_EDITOR);
 
   log(`Start recording to ${RECORDING}`);
+  runOrDie("rm", "-f", RECORDING);
   const recorder = await page.screencast({ path: RECORDING });
 
   await page.evaluate(() => {
@@ -135,10 +137,12 @@ async function main() {
   await page.select("#colorway-select", COLORS.MT3_LOTR_DWARVISH_DURIN);
   const imageArea = await page.waitForSelector("#visual-keymap");
   await new Promise((resolve) => setTimeout(resolve, 2000));
+
   for (let layer of await page.$$(".layer.non-empty")) {
     const level = await page.evaluate((el) => el.textContent, layer);
     const img = `img/layer_${level}.png`;
     log(` - ${level}. create screenshot ${img}`);
+    runOrDie("rm", "-f", img);
     await layer.click();
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await imageArea?.screenshot({ path: img });
@@ -177,14 +181,6 @@ function check(command: string, ...args: string[]): boolean {
 
 function prepare() {
   try {
-    // if (check("git", "--porcelain")) {
-    //   runOrDie("git", "branch", "-f", BRANCH_NAME, "HEAD");
-    // } else {
-    //   runOrDie("git", "stash", "push", "-ua", "-m='WIP update'");
-    //   runOrDie("git", "branch", "-f", BRANCH_NAME, "stash@{0}");
-    //   runOrDie("git", "stash", "pop");
-    // }
-    //
     let current = runOrDie("git", "branch", "--show-current");
     runOrDie("git", "checkout", "--orphan", BRANCH_NAME);
     runOrDie("git", "commit", "keymap.json", "-m='WIP update'");
@@ -216,6 +212,8 @@ async function safeMain() {
   prepare();
   try {
     await main();
+  } catch (e) {
+    console.error(e);
   } finally {
     cleanup();
     process.exit(0);
