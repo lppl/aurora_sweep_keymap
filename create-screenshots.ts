@@ -98,14 +98,32 @@ async function main() {
   });
   log("Navigate to QMK Editor");
   const page = await browser.newPage();
+
   await page.goto(URL_EDITOR);
 
   // TODO find out why recording stopped to work
   // - experienced bug: script crash without error message
   //
-  // log(`Start recording to ${RECORDING}`);
-  // runOrDie("rm", "-f", RECORDING);
-  // const recorder = await page.screencast({ path: RECORDING });
+  log(`Start recording to ${RECORDING}`);
+  runOrDie("rm", "-f", RECORDING);
+  const recorder = await page.screencast({ path: RECORDING });
+
+  await page.evaluate(() => {
+    let key = "configuratorSettings";
+    let settings = JSON.stringify({
+      version: 2,
+      darkmodeEnabled: true,
+      favoriteKeyboard: "",
+      favoriteColor: "MT3 Lotr Dwarvish Durin",
+      clearLayerDefault: false,
+      iso: false,
+      osKeyboardLayout: "keymap_us",
+      language: "en",
+    });
+    localStorage.setItem(key, settings);
+  });
+
+  await page.reload();
 
   log("Open import url popup");
   const btn = await page.$("#import-url");
@@ -134,7 +152,7 @@ async function main() {
     await imageArea?.screenshot({ path: img });
   }
 
-  // await recorder.stop();
+  await recorder.stop();
 
   page.close();
 }
