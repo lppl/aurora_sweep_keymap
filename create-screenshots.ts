@@ -121,10 +121,10 @@ async function main() {
 
   await page.reload();
 
-  // log("Open import url popup");
-  // const btn = await page.$("#import-url");
-  // await btn?.click();
-  // await new Promise((resolve) => setTimeout(resolve, 400));
+  log("Open import url popup");
+  const btn = await page.$("#import-url");
+  await btn?.click();
+  await new Promise((resolve) => setTimeout(resolve, 400));
 
   log(`Read keymap.json: ${URL_KEYMAP}`);
   const field = await page.$("#url-import-field");
@@ -182,6 +182,17 @@ function check(command: string, ...args: string[]): boolean {
 function prepare() {
   try {
     let current = runOrDie("git", "branch", "--show-current");
+    // runOrDie(
+    //   "git",
+    //   "stash",
+    //   "push",
+    //   "--include-untracked",
+    //   "--all",
+    //   "-m",
+    //   "WIP update",
+    // );
+    // runOrDie("git", "checkout", "stash@{0}");
+    runOrDie("git", "branch", "-D", "--force", BRANCH_NAME);
     runOrDie("git", "checkout", "--orphan", BRANCH_NAME);
     runOrDie("git", "commit", "keymap.json", "-m='WIP update'");
     runOrDie(
