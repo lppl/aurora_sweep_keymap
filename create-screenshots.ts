@@ -103,10 +103,26 @@ async function main() {
   log(`Start recording to ${RECORDING}`);
   const recorder = await page.screencast({ path: RECORDING });
 
-  log("Open import url popup");
-  const btn = await page.$("#import-url");
-  await btn?.click();
-  await new Promise((resolve) => setTimeout(resolve, 400));
+  await page.evaluate(() => {
+    const complexObject = JSON.stringify({
+      version: 2,
+      darkmodeEnabled: true,
+      favoriteKeyboard: "",
+      favoriteColor: "MT3 Lotr Dwarvish Durin",
+      clearLayerDefault: false,
+      iso: false,
+      osKeyboardLayout: "keymap_us",
+      language: "en",
+    });
+    localStorage.setItem("configuratorSettings", JSON.stringify(complexObject));
+  });
+
+  await page.reload();
+
+  // log("Open import url popup");
+  // const btn = await page.$("#import-url");
+  // await btn?.click();
+  // await new Promise((resolve) => setTimeout(resolve, 400));
 
   log(`Read keymap.json: ${URL_KEYMAP}`);
   const field = await page.$("#url-import-field");
@@ -168,8 +184,18 @@ function prepare() {
     //   runOrDie("git", "branch", "-f", BRANCH_NAME, "stash@{0}");
     //   runOrDie("git", "stash", "pop");
     // }
-
-    runOrDie("git", "push", "origin", "--force", "rethink:" + BRANCH_NAME);
+    //
+    let current = runOrDie("git", "branch", "--show-current");
+    runOrDie("git", "checkout", "--orphan", BRANCH_NAME);
+    runOrDie("git", "commit", "keymap.json", "-m='WIP update'");
+    runOrDie(
+      "git",
+      "push",
+      "origin",
+      "--force",
+      BRANCH_NAME + ":" + BRANCH_NAME,
+    );
+    runOrDie("git", "checkout", current);
   } catch (error) {
     console.error("Preparation failed:", error);
     process.exit(1);
@@ -179,7 +205,7 @@ function prepare() {
 function cleanup() {
   try {
     runOrDie("git", "branch", "-D", BRANCH_NAME);
-    // runOrDie("git", "push", "origin", "--delete", BRANCH_NAME);
+    runOrDie("git", "push", "origin", "--delete", BRANCH_NAME);
   } catch (error) {
     console.error("Cleanup failed:", error);
     process.exit(1);
