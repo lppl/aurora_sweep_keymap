@@ -94,7 +94,7 @@ async function main() {
       width: WIDTH,
       height: HEIGHT,
     },
-    headless: false,
+    headless: true,
   });
   log("Navigate to QMK Editor");
   const page = await browser.newPage();
@@ -153,6 +153,17 @@ async function main() {
   page.close();
 }
 
+function run(command: string, ...args: string[]): string {
+  log(`runOrDie: ${command} ${args.join(" ")}`);
+
+  const result = spawnSync(command, args, {
+    stdio: ["inherit", "pipe", "inherit"],
+    encoding: "utf8",
+  });
+
+  return result.stdout?.toString().trim() || "";
+}
+
 function runOrDie(command: string, ...args: string[]): string {
   log(`runOrDie: ${command} ${args.join(" ")}`);
 
@@ -169,6 +180,7 @@ function runOrDie(command: string, ...args: string[]): string {
 
   return result.stdout?.toString().trim() || "";
 }
+
 function check(command: string, ...args: string[]): boolean {
   log(`check: ${command} ${args.join(" ")}`);
 
@@ -192,7 +204,7 @@ function prepare() {
     //   "WIP update",
     // );
     // runOrDie("git", "checkout", "stash@{0}");
-    runOrDie("git", "branch", "-D", "--force", BRANCH_NAME);
+    run("git", "branch", "-D", "-q", BRANCH_NAME);
     runOrDie("git", "checkout", "--orphan", BRANCH_NAME);
     runOrDie("git", "commit", "keymap.json", "-m='WIP update'");
     runOrDie(
